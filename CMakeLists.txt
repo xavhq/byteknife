@@ -60,6 +60,7 @@ target_link_libraries(${PROJECT_NAME}
     PRIVATE
         Zydis
         imgui
+        OpenGL::GL
 )
 
 target_include_directories(${PROJECT_NAME}
@@ -71,6 +72,12 @@ set_target_properties(${PROJECT_NAME}
     PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY
         ${CMAKE_BINARY_DIR}/dist
+)
+
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${PROJECT_SOURCE_DIR}/.assets
+        $<TARGET_FILE_DIR:${PROJECT_NAME}>/.assets
 )
 
 message(STATUS "Project: ${PROJECT_NAME}")

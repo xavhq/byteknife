@@ -23,7 +23,7 @@ git submodule update --init --recursive
 
 You need CMake, clang, GLFW3, and OpenGL development headers. Install commands vary by distro:
 
-**Debian / Ubuntu (apt):**
+**Debian / Ubuntu / Linux Mint (apt):**
 ```bash
 sudo apt install cmake clang libglfw3-dev libglx-dev mesa-common-dev
 ```

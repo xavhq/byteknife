@@ -1,0 +1,6 @@
+[submodule "external/zydis"]
+	path = external/zydis
+	url = https://github.com/zyantific/zydis
+[submodule "external/imgui"]
+	path = external/imgui
+	url = https://github.com/ocornut/imgui

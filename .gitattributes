@@ -1,0 +1,25 @@
+# normalize line endings for text files, regardless of OS
+* text=auto eol=lf
+
+# rust source
+*.rs text diff=rust
+
+# cargo files
+Cargo.toml text
+Cargo.lock text -diff
+
+# Docs / config
+*.md text
+.editorconfig text
+.gitattributes text
+.gitignore text
+
+# shell / scripts
+*.sh text eol=lf
+*.lua text eol=lf
+
+# binary sample files used for testing the parser
+*.bin binary
+*.elf binary
+*.exe binary
+*.dll binary

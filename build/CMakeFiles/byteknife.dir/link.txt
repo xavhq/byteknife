@@ -1,1 +1,0 @@
-/usr/bin/clang++ -O3 -DNDEBUG CMakeFiles/byteknife.dir/source/main.cpp.o -o dist/byteknife  external/zydis/libZydis.a libimgui.a external/zydis/zycore/libZycore.a /usr/lib/x86_64-linux-gnu/libglfw.so.3.3 /usr/lib/x86_64-linux-gnu/libGLX.so /usr/lib/x86_64-linux-gnu/libOpenGL.so 

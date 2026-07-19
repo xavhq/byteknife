@@ -1,2 +1,2 @@
-/target
-./commit.lua
+/build
+commit.lua

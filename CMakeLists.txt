@@ -33,14 +33,14 @@ target_include_directories(imgui PUBLIC
 
 target_link_libraries(imgui PUBLIC glfw OpenGL::GL)
 
-# sources
+# byteknife sources
 file(GLOB_RECURSE CPP_SOURCES
     CONFIGURE_DEPENDS
-    src/*.cpp
+    source/*.cpp
 )
 file(GLOB_RECURSE C_SOURCES
     CONFIGURE_DEPENDS
-    src/*.c
+    source/*.c
 )
 
 add_executable(${PROJECT_NAME}
@@ -64,7 +64,6 @@ target_link_libraries(${PROJECT_NAME}
 
 target_include_directories(${PROJECT_NAME}
     PRIVATE
-        ${PROJECT_SOURCE_DIR}/include
         ${PROJECT_SOURCE_DIR}/source
 )
 

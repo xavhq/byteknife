@@ -21,10 +21,23 @@ git submodule update --init --recursive
 
 ### Dependencies
 
-- CMake 3.20+
-- clang / clang++
-- GLFW3: `sudo apt install libglfw3-dev`
-- OpenGL (usually preinstalled with GPU drivers; if missing: `sudo apt install libgl1-mesa-dev`)
+You need CMake, clang, GLFW3, and OpenGL development headers. Install commands vary by distro:
+
+**Debian / Ubuntu (apt):**
+```bash
+sudo apt install cmake clang libglfw3-dev libglx-dev mesa-common-dev
+```
+
+**Arch Linux (pacman):**
+```bash
+sudo pacman -S cmake clang glfw-x11 mesa
+```
+(use `glfw-wayland` instead of `glfw-x11` if you're running a pure Wayland session)
+
+**Fedora (dnf):**
+```bash
+sudo dnf install cmake clang glfw-devel mesa-libGL-devel
+```
 
 ### Build
 
@@ -47,10 +60,9 @@ cmake --build build
 
 - [CMake](https://cmake.org/download/) 3.20+ (add to PATH during install)
 - [LLVM/Clang for Windows](https://github.com/llvm/llvm-project/releases) (add to PATH during install)
-- [vcpkg](https://github.com/microsoft/vcpkg) — used to install GLFW and OpenGL headers
+- [vcpkg](https://github.com/microsoft/vcpkg) - used to install GLFW and OpenGL headers
 
 Set up vcpkg once, if you haven't already:
-
 ```powershell
 git clone https://github.com/microsoft/vcpkg.git
 .\vcpkg\bootstrap-vcpkg.bat
@@ -60,18 +72,59 @@ git clone https://github.com/microsoft/vcpkg.git
 ### Build
 
 From a regular terminal (PowerShell or cmd) in the project root:
-
 ```powershell
 cmake -B build -G "Ninja" -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_TOOLCHAIN_FILE=C:/path/to/vcpkg/scripts/buildsystems/vcpkg.cmake
 cmake --build build
 ```
 
-Replace `C:/path/to/vcpkg` with wherever you cloned vcpkg. `Ninja` is recommended as the generator (install via `winget install Ninja-build.Ninja` if you don't have it) — it plays better with clang than the default Visual Studio generator. If you'd rather use Visual Studio's generator instead, drop `-G "Ninja"` and CMake will default to it, but you'll need the Visual Studio Build Tools installed regardless for the underlying linker.
+Replace `C:/path/to/vcpkg` with wherever you cloned vcpkg. `Ninja` is recommended as the generator (install via `winget install Ninja-build.Ninja` if you don't have it) - it plays better with clang than the default Visual Studio generator. If you'd rather use Visual Studio's generator instead, drop `-G "Ninja"` and CMake will default to it, but you'll need the Visual Studio Build Tools installed regardless for the underlying linker.
 
 ### Run
 
 ```powershell
 .\build\dist\byteknife.exe <path-to-binary>
+```
+
+---
+
+## Build script (optional, recommended)
+
+`build.lua` wraps the CMake configure/build steps above into single commands, and forces clang consistently so you don't need to remember the full flags every time.
+
+### Install Lua
+
+**Debian / Ubuntu:**
+```bash
+sudo apt install lua5.4
+```
+
+**Arch Linux:**
+```bash
+sudo pacman -S lua
+```
+
+**Fedora:**
+```bash
+sudo dnf install lua
+```
+
+**Windows:** download an installer from [lua.org](https://www.lua.org/download.html), or install via a package manager like [Scoop](https://scoop.sh) (`scoop install lua`) or [Chocolatey](https://chocolatey.org) (`choco install lua`).
+
+### Make it executable (Linux/macOS only)
+
+```bash
+chmod +x build.lua
+```
+
+Windows doesn't use Unix file permissions, so this step isn't needed there - run it as `lua build.lua <command>` instead of `./build.lua <command>`.
+
+### Commands
+
+```bash
+./build.lua           # configure + build (Release)
+./build.lua debug     # configure + build (Debug)
+./build.lua run       # build, then run the resulting executable
+./build.lua clean     # remove the build/ directory entirely
 ```
 
 ---

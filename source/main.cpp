@@ -1,7 +1,11 @@
+#include <QApplication>
 #include <ui/app.hpp>
 
 int main(int argc, char** argv) {
-    ui::App app(argc, argv);
+    QApplication qapp(argc, argv);
 
-    return 0;
+    ui::App app(argc, argv);
+    app.show();
+
+    return qapp.exec();
 }

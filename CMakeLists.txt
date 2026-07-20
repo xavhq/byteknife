@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.20)
-project(byteknife VERSION 0.1.0 LANGUAGES CXX C)
+project(byteknife VERSION 0.1.1 LANGUAGES CXX C)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_STANDARD 23)
@@ -7,31 +7,29 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_C_STANDARD 17)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTORCC ON)
+
+# unity builds
+set(CMAKE_UNITY_BUILD ON)
+set(CMAKE_UNITY_BUILD_BATCH_SIZE 8)
+
+# cache
+find_program(CCACHE_PROGRAM ccache)
+if(CCACHE_PROGRAM)
+    set(CMAKE_CXX_COMPILER_LAUNCHER ${CCACHE_PROGRAM})
+    set(CMAKE_C_COMPILER_LAUNCHER ${CCACHE_PROGRAM})
+    message(STATUS "Using ccache")
+endif()
+
+find_package(Qt6 REQUIRED COMPONENTS Widgets Concurrent)
+
 # Zydis
 add_subdirectory(external/zydis)
 
-# Dear ImGui
-set(IMGUI_DIR ${PROJECT_SOURCE_DIR}/external/imgui)
-
-find_package(glfw3 REQUIRED)
-find_package(OpenGL REQUIRED)
-
-add_library(imgui STATIC
-    ${IMGUI_DIR}/imgui.cpp
-    ${IMGUI_DIR}/imgui_draw.cpp
-    ${IMGUI_DIR}/imgui_tables.cpp
-    ${IMGUI_DIR}/imgui_widgets.cpp
-    ${IMGUI_DIR}/imgui_demo.cpp
-    ${IMGUI_DIR}/backends/imgui_impl_glfw.cpp
-    ${IMGUI_DIR}/backends/imgui_impl_opengl3.cpp
-)
-
-target_include_directories(imgui PUBLIC
-    ${IMGUI_DIR}
-    ${IMGUI_DIR}/backends
-)
-
-target_link_libraries(imgui PUBLIC glfw OpenGL::GL)
+# QHexView
+add_subdirectory(external/qhexview)
 
 # byteknife sources
 file(GLOB_RECURSE CPP_SOURCES
@@ -48,6 +46,11 @@ add_executable(${PROJECT_NAME}
     ${C_SOURCES}
 )
 
+# precompiled headers
+target_precompile_headers(${PROJECT_NAME} PRIVATE
+    ${PROJECT_SOURCE_DIR}/source/pch.h
+)
+
 target_compile_options(${PROJECT_NAME}
     PRIVATE
         -Wall
@@ -58,15 +61,20 @@ target_compile_options(${PROJECT_NAME}
 
 target_link_libraries(${PROJECT_NAME}
     PRIVATE
+        Qt6::Widgets
+        Qt6::Concurrent
         Zydis
-        imgui
-        OpenGL::GL
+        QHexView
 )
 
 target_include_directories(${PROJECT_NAME}
     PRIVATE
         ${PROJECT_SOURCE_DIR}/source
 )
+
+# disable unity for zydis
+set_target_properties(Zydis PROPERTIES UNITY_BUILD OFF)
+set_target_properties(Zycore PROPERTIES UNITY_BUILD OFF)
 
 set_target_properties(${PROJECT_NAME}
     PROPERTIES
@@ -77,7 +85,7 @@ set_target_properties(${PROJECT_NAME}
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
         ${PROJECT_SOURCE_DIR}/.assets
-        $<TARGET_FILE_DIR:${PROJECT_NAME}>/.assets
+        $<TARGET_FILE_DIR:${PROJECT_NAME}>/assets
 )
 
 message(STATUS "Project: ${PROJECT_NAME}")

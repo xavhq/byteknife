@@ -4,7 +4,7 @@ A cross-platform static and dynamic analysis toolkit for ELF and PE binaries - p
 
 ## Status
 
-Early work in progress. ELF/PE header parsing is the current focus; a GUI (via imgui) will come later.
+Early work in progress. ELF/PE header parsing is the current focus; a GUI (via Qt) will come later.
 
 ## Setup
 
@@ -21,22 +21,21 @@ git submodule update --init --recursive
 
 ### Dependencies
 
-You need CMake, clang, GLFW3, and OpenGL development headers. Install commands vary by distro:
+You need CMake, clang, and Qt6 (Widgets + Concurrent). Install commands vary by distro:
 
 **Debian / Ubuntu / Linux Mint (apt):**
 ```bash
-sudo apt install cmake clang libglfw3-dev libglx-dev mesa-common-dev
+sudo apt install cmake clang qt6-base-dev
 ```
 
 **Arch Linux (pacman):**
 ```bash
-sudo pacman -S cmake clang glfw-x11 mesa
+sudo pacman -S cmake clang qt6-base
 ```
-(use `glfw-wayland` instead of `glfw-x11` if you're running a pure Wayland session)
 
 **Fedora (dnf):**
 ```bash
-sudo dnf install cmake clang glfw-devel mesa-libGL-devel
+sudo dnf install cmake clang qt6-qtbase-devel
 ```
 
 ### Build
@@ -58,26 +57,19 @@ cmake --build build
 
 ### Dependencies
 
-- [CMake](https://cmake.org/download/) 3.20+ (add to PATH during install)
-- [LLVM/Clang for Windows](https://github.com/llvm/llvm-project/releases) (add to PATH during install)
-- [vcpkg](https://github.com/microsoft/vcpkg) - used to install GLFW and OpenGL headers
-
-Set up vcpkg once, if you haven't already:
-```powershell
-git clone https://github.com/microsoft/vcpkg.git
-.\vcpkg\bootstrap-vcpkg.bat
-.\vcpkg\vcpkg install glfw3 opengl
-```
+- **CMake 3.20+**: [cmake.org/download](https://cmake.org/download/) - grab the "Windows x64 Installer" (`.msi`), and check "Add CMake to system PATH" during install.
+- **LLVM/Clang**: [github.com/llvm/llvm-project/releases](https://github.com/llvm/llvm-project/releases) - download the latest `LLVM-<version>-win64.exe` from the release's Assets list, and check "Add LLVM to system PATH" during install.
+- **Qt6**: [qt.io/download-qt-installer](https://www.qt.io/download-qt-installer) - run the Qt Online Installer, sign in (free account required), and select the Qt6 "Desktop" component matching your compiler (MinGW or MSVC kit).
 
 ### Build
 
 From a regular terminal (PowerShell or cmd) in the project root:
 ```powershell
-cmake -B build -G "Ninja" -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_TOOLCHAIN_FILE=C:/path/to/vcpkg/scripts/buildsystems/vcpkg.cmake
+cmake -B build -G "Ninja" -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_PREFIX_PATH=C:/Qt/6.x.x/mingw_64
 cmake --build build
 ```
 
-Replace `C:/path/to/vcpkg` with wherever you cloned vcpkg. `Ninja` is recommended as the generator (install via `winget install Ninja-build.Ninja` if you don't have it) - it plays better with clang than the default Visual Studio generator. If you'd rather use Visual Studio's generator instead, drop `-G "Ninja"` and CMake will default to it, but you'll need the Visual Studio Build Tools installed regardless for the underlying linker.
+Replace `C:/Qt/6.x.x/mingw_64` with your actual Qt install path (shown in the Qt Maintenance Tool, varies by version/kit). `Ninja` is recommended as the generator (install via `winget install Ninja-build.Ninja` if you don't have it). If you'd rather use Visual Studio's generator instead, drop `-G "Ninja"` and CMake will default to it, but you'll need the Visual Studio Build Tools installed regardless for the underlying linker.
 
 ### Run
 
@@ -144,3 +136,7 @@ Copy-Item build\compile_commands.json .
 ## License
 
 MIT
+
+## Documentation
+
+Once built, read the docs: [byteknife](docs/byteknife.md)

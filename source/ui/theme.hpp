@@ -1,91 +1,71 @@
 #pragma once
-/* maps token categories -> ImVec4 colors */
 
-#include <imgui.h>
+#include <QApplication>
+#include <QStyleFactory>
+#include <QPalette>
+#include <QColor>
 
 namespace ui {
-    inline static void ApplyTheme() {
-        ImGuiStyle& style = ImGui::GetStyle();
-        ImVec4* colors = style.Colors;
+    inline static void ApplyDarkTheme() {
+        qApp->setStyle(QStyleFactory::create("Fusion"));
 
-        /* shape: rounded, borderless, tighter spacing */
-        style.WindowRounding    = 6.0f;
-        style.ChildRounding     = 6.0f;
-        style.FrameRounding     = 4.0f;
-        style.PopupRounding     = 4.0f;
-        style.ScrollbarRounding = 8.0f;
-        style.GrabRounding      = 4.0f;
-        style.TabRounding       = 4.0f;
+        QPalette palette;
 
-        style.WindowBorderSize = 0.0f;
-        style.ChildBorderSize  = 1.0f;
-        style.FrameBorderSize  = 0.0f;
-        style.PopupBorderSize  = 1.0f;
+        QColor bg(30, 31, 34);
+        QColor bg_alt(37, 38, 42);
+        QColor bg_elevated(45, 46, 51);
+        QColor text(220, 220, 224);
+        QColor text_disabled(120, 120, 126);
+        QColor accent(64, 128, 224);
 
-        style.WindowPadding   = ImVec2(12, 12);
-        style.FramePadding    = ImVec2(8, 5);
-        style.ItemSpacing      = ImVec2(8, 6);
-        style.ItemInnerSpacing = ImVec2(6, 6);
-        style.IndentSpacing    = 18.0f;
-        style.ScrollbarSize    = 12.0f;
-        style.GrabMinSize      = 10.0f;
+        palette.setColor(QPalette::Window, bg);
+        palette.setColor(QPalette::WindowText, text);
+        palette.setColor(QPalette::Base, bg_alt);
+        palette.setColor(QPalette::AlternateBase, bg_elevated);
+        palette.setColor(QPalette::ToolTipBase, bg_elevated);
+        palette.setColor(QPalette::ToolTipText, text);
+        palette.setColor(QPalette::Text, text);
+        palette.setColor(QPalette::Disabled, QPalette::Text, text_disabled);
+        palette.setColor(QPalette::Button, bg_elevated);
+        palette.setColor(QPalette::ButtonText, text);
+        palette.setColor(QPalette::Disabled, QPalette::ButtonText, text_disabled);
+        palette.setColor(QPalette::BrightText, Qt::red);
+        palette.setColor(QPalette::Link, accent);
 
-        /* color palette: dark slate + single accent, not default ImGui gray/blue */
-        colors[ImGuiCol_Text]                  = ImVec4(0.92f, 0.93f, 0.94f, 1.00f);
-        colors[ImGuiCol_TextDisabled]          = ImVec4(0.50f, 0.52f, 0.55f, 1.00f);
-        colors[ImGuiCol_WindowBg]              = ImVec4(0.09f, 0.10f, 0.12f, 1.00f);
-        colors[ImGuiCol_ChildBg]               = ImVec4(0.11f, 0.12f, 0.14f, 1.00f);
-        colors[ImGuiCol_PopupBg]               = ImVec4(0.11f, 0.12f, 0.14f, 0.98f);
-        colors[ImGuiCol_Border]                = ImVec4(0.20f, 0.21f, 0.24f, 1.00f);
+        palette.setColor(QPalette::Highlight, accent);
+        palette.setColor(QPalette::HighlightedText, Qt::black);
+        palette.setColor(QPalette::Disabled, QPalette::Highlight, bg_elevated);
+        palette.setColor(QPalette::Disabled, QPalette::HighlightedText, text_disabled);
 
-        colors[ImGuiCol_FrameBg]               = ImVec4(0.15f, 0.16f, 0.19f, 1.00f);
-        colors[ImGuiCol_FrameBgHovered]        = ImVec4(0.19f, 0.21f, 0.25f, 1.00f);
-        colors[ImGuiCol_FrameBgActive]         = ImVec4(0.22f, 0.24f, 0.28f, 1.00f);
+        palette.setColor(QPalette::PlaceholderText, text_disabled);
 
-        colors[ImGuiCol_TitleBg]               = ImVec4(0.09f, 0.10f, 0.12f, 1.00f);
-        colors[ImGuiCol_TitleBgActive]         = ImVec4(0.12f, 0.13f, 0.16f, 1.00f);
+        qApp->setPalette(palette);
+    }
 
-        colors[ImGuiCol_MenuBarBg]             = ImVec4(0.11f, 0.12f, 0.14f, 1.00f);
+    inline static void ApplyLightTheme() {
+        qApp->setStyle(QStyleFactory::create("Fusion"));
 
-        colors[ImGuiCol_ScrollbarBg]           = ImVec4(0.09f, 0.10f, 0.12f, 1.00f);
-        colors[ImGuiCol_ScrollbarGrab]         = ImVec4(0.25f, 0.27f, 0.31f, 1.00f);
-        colors[ImGuiCol_ScrollbarGrabHovered]  = ImVec4(0.32f, 0.35f, 0.40f, 1.00f);
-        colors[ImGuiCol_ScrollbarGrabActive]   = ImVec4(0.38f, 0.42f, 0.48f, 1.00f);
+        QPalette palette;
 
-        ImVec4 accent         = ImVec4(0.30f, 0.62f, 0.98f, 1.00f);
-        ImVec4 accent_hover   = ImVec4(0.38f, 0.68f, 1.00f, 1.00f);
-        ImVec4 accent_active  = ImVec4(0.24f, 0.52f, 0.88f, 1.00f);
+        palette.setColor(QPalette::Window, QColor(240, 240, 240));
+        palette.setColor(QPalette::WindowText, Qt::black);
+        palette.setColor(QPalette::Base, Qt::white);
+        palette.setColor(QPalette::AlternateBase, QColor(233, 233, 238));
+        palette.setColor(QPalette::ToolTipBase, QColor(255, 255, 220));
+        palette.setColor(QPalette::ToolTipText, Qt::black);
+        palette.setColor(QPalette::Text, Qt::black);
+        palette.setColor(QPalette::Disabled, QPalette::Text, QColor(120, 120, 120));
+        palette.setColor(QPalette::Button, QColor(240, 240, 240));
+        palette.setColor(QPalette::ButtonText, Qt::black);
+        palette.setColor(QPalette::Disabled, QPalette::ButtonText, QColor(120, 120, 120));
+        palette.setColor(QPalette::BrightText, Qt::red);
+        palette.setColor(QPalette::Link, QColor(0, 85, 255));
+        palette.setColor(QPalette::Highlight, QColor(42, 130, 218));
+        palette.setColor(QPalette::HighlightedText, Qt::white);
+        palette.setColor(QPalette::Disabled, QPalette::Highlight, QColor(145, 145, 145));
+        palette.setColor(QPalette::Disabled, QPalette::HighlightedText, QColor(190, 190, 190));
+        palette.setColor(QPalette::PlaceholderText, QColor(160, 160, 160));
 
-        colors[ImGuiCol_CheckMark]             = accent;
-        colors[ImGuiCol_SliderGrab]            = accent;
-        colors[ImGuiCol_SliderGrabActive]      = accent_active;
-        colors[ImGuiCol_Button]                = ImVec4(0.17f, 0.19f, 0.22f, 1.00f);
-        colors[ImGuiCol_ButtonHovered]         = accent_hover;
-        colors[ImGuiCol_ButtonActive]          = accent_active;
-        colors[ImGuiCol_Header]                = ImVec4(0.17f, 0.19f, 0.22f, 1.00f);
-        colors[ImGuiCol_HeaderHovered]         = accent_hover;
-        colors[ImGuiCol_HeaderActive]          = accent_active;
-        colors[ImGuiCol_Separator]             = ImVec4(0.20f, 0.21f, 0.24f, 1.00f);
-        colors[ImGuiCol_ResizeGrip]            = ImVec4(0.20f, 0.21f, 0.24f, 0.00f);
-        colors[ImGuiCol_ResizeGripHovered]     = accent_hover;
-        colors[ImGuiCol_ResizeGripActive]      = accent_active;
-
-        colors[ImGuiCol_Tab]                   = ImVec4(0.11f, 0.12f, 0.14f, 1.00f);
-        colors[ImGuiCol_TabHovered]            = accent_hover;
-        colors[ImGuiCol_TabActive]             = ImVec4(0.17f, 0.19f, 0.22f, 1.00f);
-        colors[ImGuiCol_TabUnfocused]          = ImVec4(0.11f, 0.12f, 0.14f, 1.00f);
-        colors[ImGuiCol_TabUnfocusedActive]    = ImVec4(0.14f, 0.15f, 0.18f, 1.00f);
-
-        colors[ImGuiCol_TableHeaderBg]         = ImVec4(0.14f, 0.15f, 0.18f, 1.00f);
-        colors[ImGuiCol_TableRowBg]            = ImVec4(0.10f, 0.11f, 0.13f, 1.00f);
-        colors[ImGuiCol_TableRowBgAlt]         = ImVec4(0.12f, 0.13f, 0.16f, 1.00f);
-        colors[ImGuiCol_TableBorderStrong]     = ImVec4(0.20f, 0.21f, 0.24f, 1.00f);
-        colors[ImGuiCol_TableBorderLight]      = ImVec4(0.16f, 0.17f, 0.20f, 1.00f);
-
-        colors[ImGuiCol_PlotLines]             = accent;
-        colors[ImGuiCol_PlotHistogram]         = accent;
-
-        colors[ImGuiCol_TextSelectedBg]        = ImVec4(accent.x, accent.y, accent.z, 0.35f);
-        colors[ImGuiCol_DragDropTarget]        = accent;
+        qApp->setPalette(palette);
     }
 }

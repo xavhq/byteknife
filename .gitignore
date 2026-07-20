@@ -1,6 +1,6 @@
 /build
-./commit.lua
-./compile_commands.json
-./.cache
-./.zed
-./.vscode
+commit.lua
+compile_commands.json
+.cache
+.zed
+.vscode

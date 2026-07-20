@@ -3,6 +3,8 @@
 #include <QMainWindow>
 #include <QMessageBox>
 #include <QCloseEvent>
+#include <QStackedWidget>
+#include <QWidget>
 
 namespace ui {
     class App : public QMainWindow {
@@ -12,22 +14,17 @@ namespace ui {
         explicit App(int argc, char** argv, QWidget* parent = nullptr);
 
     private:
+        QStackedWidget* view_stack_;
+
+        /* ui */
         void WindowInit();
         void MenuInit();
-        void OpenBinary();
+        void WorkViewsInit();
 
-        void closeEvent(QCloseEvent* event) override {
-            QMessageBox::StandardButton reply = QMessageBox::question(
-                this,
-                "Exit byteknife",
-                "Are you sure you want to exit?",
-                QMessageBox::Yes | QMessageBox::No
-            );
+        /* events */
+        void OpenBinaryEvent();
+        void CloseEvent(QCloseEvent* event);
 
-            if (reply == QMessageBox::Yes)
-                event->accept();
-            else
-                event->ignore();
-        }
+        void closeEvent(QCloseEvent* event) override { this->CloseEvent(event); }
     };
 }

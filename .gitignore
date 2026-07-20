@@ -1,4 +1,7 @@
 /build
+/cache
+/cache/clangd
+/cache/clangd/index
 commit.lua
 compile_commands.json
 .cache

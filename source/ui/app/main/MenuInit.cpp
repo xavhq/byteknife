@@ -14,6 +14,7 @@
 #include <QMenu>
 #include <QDesktopServices>
 #include <QUrl>
+#include <QProxyStyle>
 
 void ui::App::MenuInit() {
     /* main toolbar */
@@ -59,7 +60,7 @@ void ui::App::MenuInit() {
         exit_action->setShortcut(QKeySequence::Quit);
 
         connect(exit_action, &QAction::triggered, this, &QWidget::close);
-        connect(open_binary_action, &QAction::triggered, this, &ui::App::OpenBinary);
+        connect(open_binary_action, &QAction::triggered, this, &ui::App::OpenBinaryEvent);
     }
 
     /* edit menu */

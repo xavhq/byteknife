@@ -1,8 +1,7 @@
 #pragma once
 
-// Qt Core
+/* qt core */
 #include <QtCore>
-#include <QtGlobal>
 #include <QObject>
 #include <QString>
 #include <QByteArray>
@@ -36,8 +35,7 @@
 #include <QLoggingCategory>
 #include <QMetaObject>
 #include <QVariant>
-
-// Qt Gui
+/* qt gui */
 #include <QtGui>
 #include <QColor>
 #include <QFont>
@@ -58,8 +56,7 @@
 #include <QKeyEvent>
 #include <QResizeEvent>
 #include <QCloseEvent>
-
-// Qt Widgets
+/* qt widgets */
 #include <QtWidgets>
 #include <QWidget>
 #include <QMainWindow>
@@ -101,16 +98,15 @@
 #include <QDockWidget>
 #include <QMdiArea>
 #include <QMdiSubWindow>
+#include <QProxyStyle>
 #include <QToolBox>
 #include <QCalendarWidget>
-
-// Qt Concurrent
+/* qt concurrent */
 #include <QtConcurrent>
 #include <QtConcurrentRun>
 #include <QtConcurrentMap>
 #include <QtConcurrentFilter>
-
-// Standard Library
+/* stdlib */
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -164,3 +160,7 @@
 #include <exception>
 #include <system_error>
 #include <source_location>
+
+/* libraries */
+#include <Zydis/Zydis.h>
+#include <QHexView/qhexview.h>

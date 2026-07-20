@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.20)
-project(byteknife VERSION 0.1.1 LANGUAGES CXX C)
+project(byteknife VERSION 0.1.2 LANGUAGES CXX C)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_STANDARD 23)
@@ -15,7 +15,7 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_UNITY_BUILD ON)
 set(CMAKE_UNITY_BUILD_BATCH_SIZE 8)
 
-# cache
+# ccache
 find_program(CCACHE_PROGRAM ccache)
 if(CCACHE_PROGRAM)
     set(CMAKE_CXX_COMPILER_LAUNCHER ${CCACHE_PROGRAM})
@@ -23,13 +23,20 @@ if(CCACHE_PROGRAM)
     message(STATUS "Using ccache")
 endif()
 
+# mold linker (much faster than default ld/lld for large link steps)
+find_program(MOLD_PROGRAM mold)
+if(MOLD_PROGRAM)
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fuse-ld=mold")
+    message(STATUS "Using mold linker")
+endif()
+
 find_package(Qt6 REQUIRED COMPONENTS Widgets Concurrent)
 
 # Zydis
-add_subdirectory(external/zydis)
+add_subdirectory(.libraries/zydis)
 
 # QHexView
-add_subdirectory(external/qhexview)
+add_subdirectory(.libraries/qhexview)
 
 # byteknife sources
 file(GLOB_RECURSE CPP_SOURCES
@@ -56,7 +63,8 @@ target_compile_options(${PROJECT_NAME}
         -Wall
         -Wextra
         -Wpedantic
-        -O2
+        $<$<CONFIG:Release>:-O2>
+        $<$<CONFIG:Debug>:-O0 -g>
 )
 
 target_link_libraries(${PROJECT_NAME}

@@ -38,6 +38,27 @@ sudo pacman -S cmake clang qt6-base
 sudo dnf install cmake clang qt6-qtbase-devel
 ```
 
+### Optional: faster linking with mold
+
+byteknife's `CMakeLists.txt` automatically detects and uses the [mold linker](https://github.com/rui314/mold) if it's installed, since it links noticeably faster than the default linker on large builds (Qt + Zydis + QHexView means a lot of object files to link). This is entirely optional - if mold isn't installed, the build falls back to your system's default linker with no extra configuration needed.
+
+**Debian / Ubuntu:**
+```bash
+sudo apt install mold
+```
+
+**Arch Linux:**
+```bash
+sudo pacman -S mold
+```
+
+**Fedora:**
+```bash
+sudo dnf install mold
+```
+
+Note: mold is Linux-only (with macOS support in early/pre-alpha and no official Windows support yet), so this only applies here, not in the Windows section below.
+
 ### Build
 
 ```bash

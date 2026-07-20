@@ -1,14 +1,11 @@
 # normalize line endings for text files, regardless of OS
 * text=auto eol=lf
 
-# rust source
-*.rs text diff=rust
+# C++ source
+*.cpp text diff=cpp
+*.hpp text diff=cpp
 
-# cargo files
-Cargo.toml text
-Cargo.lock text -diff
-
-# Docs / config
+# docs / config
 *.md text
 .editorconfig text
 .gitattributes text
@@ -23,3 +20,4 @@ Cargo.lock text -diff
 *.elf binary
 *.exe binary
 *.dll binary
+*.so binary

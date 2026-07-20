@@ -1,5 +1,4 @@
 #include <ui/app.hpp>
-#include <ui/theme.hpp>
 
 #include <QApplication>
 #include <QLabel>
@@ -12,5 +11,6 @@ namespace ui {
 
         this->WindowInit();
         this->MenuInit();
+        this->WorkViewsInit();
     }
 }

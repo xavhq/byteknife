@@ -5,7 +5,7 @@
 #include <QPalette>
 #include <QColor>
 
-namespace ui {
+namespace ui::Theme {
     inline static void ApplyDarkTheme() {
         qApp->setStyle(QStyleFactory::create("Fusion"));
 

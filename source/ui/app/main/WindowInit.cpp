@@ -15,14 +15,13 @@ void ui::App::WindowInit() {
         int font_id = QFontDatabase::addApplicationFont(font_path);
         if (font_id != -1) {
             const QString family = QFontDatabase::applicationFontFamilies(font_id).at(0);
-            // qDebug() << "Loaded font family:" << family;
             qApp->setFont(QFont(family, 10));
         } else {
             qWarning() << "Failed to load font from" << font_path;
         }
     }
 
-    // ui::Theme::ApplyDarkTheme();
+    ui::Theme::ApplyDarkTheme();
 
     qApp->setStyle(new ui::Theme::MnemonicStyle(QStyleFactory::create("Fusion")));
     qApp->setStyleSheet("QToolButton::menu-indicator { image: none; width: 0px; }");

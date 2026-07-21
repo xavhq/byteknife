@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.20)
-project(byteknife VERSION 0.1.2 LANGUAGES CXX C)
+project(byteknife VERSION 0.1.3 LANGUAGES CXX C)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_STANDARD 23)
@@ -35,8 +35,6 @@ find_package(Qt6 REQUIRED COMPONENTS Widgets Concurrent)
 # Zydis
 add_subdirectory(.libraries/zydis)
 
-# QHexView
-add_subdirectory(.libraries/qhexview)
 
 # byteknife sources
 file(GLOB_RECURSE CPP_SOURCES
@@ -72,7 +70,6 @@ target_link_libraries(${PROJECT_NAME}
         Qt6::Widgets
         Qt6::Concurrent
         Zydis
-        QHexView
 )
 
 target_include_directories(${PROJECT_NAME}

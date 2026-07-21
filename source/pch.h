@@ -163,4 +163,3 @@
 
 /* libraries */
 #include <Zydis/Zydis.h>
-#include <QHexView/qhexview.h>

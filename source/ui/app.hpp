@@ -1,5 +1,8 @@
 #pragma once
 
+#include <ui/views/binary/view.hpp>
+#include <ui/views/hex/view.hpp>
+
 #include <QMainWindow>
 #include <QMessageBox>
 #include <QCloseEvent>
@@ -15,6 +18,8 @@ namespace ui {
 
     private:
         QStackedWidget* view_stack_;
+        ui::views::BinaryView* binary_view_;
+        ui::views::HexView* hex_view_;
 
         /* ui */
         void WindowInit();
@@ -25,6 +30,7 @@ namespace ui {
         void OpenBinaryEvent();
         void CloseEvent(QCloseEvent* event);
 
+    protected:
         void closeEvent(QCloseEvent* event) override { this->CloseEvent(event); }
     };
 }

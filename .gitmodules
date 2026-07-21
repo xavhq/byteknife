@@ -1,6 +1,3 @@
 [submodule "external/zydis"]
 	path = .libraries/zydis
 	url = https://github.com/zyantific/zydis
-[submodule "external/qhexview"]
-	path = .libraries/qhexview
-	url = https://github.com/Dax89/QHexView

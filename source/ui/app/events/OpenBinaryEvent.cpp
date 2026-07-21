@@ -33,8 +33,9 @@ void ui::App::OpenBinaryEvent() {
     this->hex_view_->OnBinaryOpen();
 
     /* TODO: replace with real disassembly output. */
-    this->binary_view_->AddInstructionRow("0x00401000", "55 8B EC", "push ebp");
-    this->binary_view_->AddInstructionRow("0x00401001", "8B 45 08", "mov eax, [ebp+8]");
+    /* TODO: make the addresses be 32bit / 64bit depending on the binaries architechure */
+    this->binary_view_->AddInstructionRow("00000401000", "55 8B EC", "push ebp");
+    this->binary_view_->AddInstructionRow("00000401001", "8B 45 08", "mov eax, [ebp+8]");
 
     progress.close();
 }

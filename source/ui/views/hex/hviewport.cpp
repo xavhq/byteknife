@@ -6,6 +6,11 @@
 #include <QKeyEvent>
 #include <QFontMetricsF>
 #include <QEvent>
+#include <QApplication>
+#include <QClipboard>
+#include <QMenu>
+#include <QContextMenuEvent>
+#include <algorithm>
 
 namespace ui::views {
     HexViewport::HexViewport(QWidget* parent) : QAbstractScrollArea(parent) {
@@ -16,22 +21,25 @@ namespace ui::views {
     }
 
     void HexViewport::SetReadOnly(bool read_only) {
-        this->read_only_ = read_only; /* reserved for future editing support */
+        this->read_only_ = read_only;
+    }
+
+    void HexViewport::SetAddressWidth(int width) {
+        this->address_width_ = width;
+        this->UpdateScrollRange();
+        this->viewport()->update();
     }
 
     void HexViewport::UpdateColors() {
         const QPalette& pal = this->palette();
 
-        /* base surface colors, following the current color scheme */
         this->bg_color_ = pal.color(QPalette::Base);
         this->bg_alt_color_ = pal.color(QPalette::AlternateBase);
-
-        /* text colors, dimmed variant for addresses via disabled-state text */
         this->address_color_ = pal.color(QPalette::Disabled, QPalette::Text);
         this->hex_color_ = pal.color(QPalette::Text);
         this->ascii_color_ = pal.color(QPalette::Text);
-
         this->separator_color_ = pal.color(QPalette::Mid);
+        this->unused_color_ = pal.color(QPalette::Mid);
 
         QColor selection = pal.color(QPalette::Highlight);
         selection.setAlpha(120);
@@ -52,10 +60,8 @@ namespace ui::views {
         this->selection_start_ = -1;
         this->selection_end_ = -1;
 
-        /* pick an address width wide enough for the data, minimum 8 hex digits */
-        this->address_width_ = (this->data_.size() > 0xFFFFFFFFLL) ? 16 : 8;
-
         this->UpdateMetrics();
+        this->RecalculateBytesPerLine();
         this->UpdateScrollRange();
         this->verticalScrollBar()->setValue(0);
         this->viewport()->update();
@@ -98,6 +104,33 @@ namespace ui::views {
         return this->AsciiColumnX() + this->bytes_per_line_ * this->char_width_ + this->char_width_ * 2;
     }
 
+    void HexViewport::RecalculateBytesPerLine() {
+        if (!this->auto_fit_)
+            return;
+
+        qreal available = this->viewport()->width() - this->HexColumnX() - this->char_width_ * 2;
+        if (available <= 0)
+            return;
+
+        int best = this->min_bytes_per_line_;
+
+        for (int candidate = this->min_bytes_per_line_; candidate <= this->max_bytes_per_line_; candidate++) {
+            qreal group_gaps = (candidate / 8) * this->char_width_;
+            qreal width_needed = (candidate * 3 * this->char_width_) + (candidate * this->char_width_) + group_gaps;
+
+            if (width_needed <= available)
+                best = candidate;
+            else
+                break;
+        }
+
+        if (best != this->bytes_per_line_) {
+            this->bytes_per_line_ = best;
+            this->selection_start_ = -1;
+            this->selection_end_ = -1;
+        }
+    }
+
     void HexViewport::UpdateScrollRange() {
         qint64 lines = this->LineCount();
         int visible = this->VisibleLines();
@@ -109,7 +142,6 @@ namespace ui::views {
         int viewport_width = this->viewport()->width();
 
         if (this->centered_ && content_width < viewport_width) {
-            /* content fits, center it and disable horizontal scrolling */
             this->content_offset_x_ = (viewport_width - content_width) / 2.0;
             this->horizontalScrollBar()->setRange(0, 0);
         } else {
@@ -120,23 +152,22 @@ namespace ui::views {
     }
 
     qreal HexViewport::HexColumnX() const {
-        /* 1 char left margin + address digits + 2 char gap */
         return (1 + this->address_width_ + 2) * this->char_width_;
     }
 
     qreal HexViewport::ByteCellX(int column) const {
         qreal x = this->HexColumnX();
         for (int i = 0; i < column; i++) {
-            x += this->char_width_ * 3; /* "FF " */
+            x += this->char_width_ * 3;
             if ((i + 1) % 8 == 0)
-                x += this->char_width_; /* extra gap every 8 bytes */
+                x += this->char_width_;
         }
         return x;
     }
 
     qreal HexViewport::AsciiColumnX() const {
         qreal x = this->ByteCellX(this->bytes_per_line_ - 1) + this->char_width_ * 3;
-        x += this->char_width_ * 2; /* gap before ascii column */
+        x += this->char_width_ * 2;
         return x;
     }
 
@@ -159,9 +190,6 @@ namespace ui::views {
         qint64 first_line = this->verticalScrollBar()->value();
         int visible = this->VisibleLines();
 
-        /* draw alternating row stripes across the FULL viewport width,
-           before translating, so they always reach both edges regardless
-           of content centering or horizontal scroll */
         for (int row = 0; row < visible; row++) {
             qint64 line = first_line + row;
             if (line >= this->LineCount())
@@ -173,7 +201,6 @@ namespace ui::views {
             }
         }
 
-        /* now translate for the actual content (address/hex/ascii columns) */
         painter.translate(this->content_offset_x_ - this->horizontalScrollBar()->value(), 0);
 
         for (int row = 0; row < visible; row++) {
@@ -184,13 +211,11 @@ namespace ui::views {
             qreal y = row * this->line_height_;
             qint64 line_offset = line * this->bytes_per_line_;
 
-            /* address column */
             QString addr = QString("%1").arg(line_offset, this->address_width_, 16, QChar('0')).toUpper();
             painter.setPen(this->address_color_);
             painter.drawText(QRectF(this->char_width_, y, this->address_width_ * this->char_width_, this->line_height_),
                               Qt::AlignVCenter | Qt::AlignLeft, addr);
 
-            /* hex + ascii columns */
             for (int col = 0; col < this->bytes_per_line_; col++) {
                 qint64 offset = line_offset + col;
                 if (offset >= this->data_.size())
@@ -217,7 +242,6 @@ namespace ui::views {
             }
         }
 
-        /* column separators */
         painter.setPen(this->separator_color_);
         qreal hex_sep_x = this->HexColumnX() - this->char_width_;
         qreal ascii_sep_x = this->AsciiColumnX() - this->char_width_;
@@ -227,7 +251,9 @@ namespace ui::views {
 
     void HexViewport::resizeEvent(QResizeEvent* event) {
         QAbstractScrollArea::resizeEvent(event);
+        this->RecalculateBytesPerLine();
         this->UpdateScrollRange();
+        this->viewport()->update();
     }
 
     qint64 HexViewport::OffsetFromPoint(const QPoint& pos) const {
@@ -236,7 +262,6 @@ namespace ui::views {
 
         int col = -1;
 
-        /* check hex region first */
         for (int i = 0; i < this->bytes_per_line_; i++) {
             qreal cell_x = this->ByteCellX(i);
             if (abs_x >= cell_x && abs_x < cell_x + this->char_width_ * 2) {
@@ -245,7 +270,6 @@ namespace ui::views {
             }
         }
 
-        /* fall back to ascii region */
         if (col == -1) {
             qreal ascii_x = this->AsciiColumnX();
             if (abs_x >= ascii_x) {
@@ -281,6 +305,18 @@ namespace ui::views {
     }
 
     void HexViewport::keyPressEvent(QKeyEvent* event) {
+        if (event->matches(QKeySequence::Copy)) {
+            this->CopySelectionAsHex();
+            event->accept();
+            return;
+        }
+
+        if (event->matches(QKeySequence::SelectAll)) {
+            this->SelectAll();
+            event->accept();
+            return;
+        }
+
         switch (event->key()) {
             case Qt::Key_Up:
                 this->verticalScrollBar()->setValue(this->verticalScrollBar()->value() - 1);

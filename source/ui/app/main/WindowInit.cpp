@@ -21,7 +21,7 @@ void ui::App::WindowInit() {
         }
     }
 
-    ui::Theme::ApplyDarkTheme();
+    // ui::Theme::ApplyDarkTheme();
 
     qApp->setStyle(new ui::Theme::MnemonicStyle(QStyleFactory::create("Fusion")));
     qApp->setStyleSheet("QToolButton::menu-indicator { image: none; width: 0px; }");

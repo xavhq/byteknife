@@ -1,13 +1,21 @@
 #include <ui/app/components/ViewPlaceHolderContent.hpp>
+
 #include <QLabel>
 #include <QVBoxLayout>
+#include <QDir>
+#include <QCoreApplication>
+#include <QFontDatabase>
+#include <QDebug>
 
 namespace ui::views {
     ViewPlaceHolderContent::ViewPlaceHolderContent(QWidget* parent) : QWidget(parent) {
+        this->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+
         auto* label = new QLabel(
             "No binary is loaded!<br>Press <b>Ctrl+O</b> to open a binary",
             this
         );
+
         label->setAlignment(Qt::AlignCenter);
         label->setTextFormat(Qt::RichText);
         label->setWordWrap(false);
@@ -29,7 +37,11 @@ namespace ui::views {
         }
 
         auto* layout = new QVBoxLayout(this);
+        layout->setContentsMargins(0, 0, 0, 0);
+        layout->setSpacing(0);
+        layout->addStretch(1);
         layout->addWidget(label, 0, Qt::AlignCenter);
+        layout->addStretch(1);
         setLayout(layout);
     }
 }

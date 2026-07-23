@@ -1,17 +1,17 @@
-#include <ui/views/binary/disasm/dtable.hpp>
+#include <ui/views/disassembly/code/table.hpp>
 #include <QScrollBar>
 #include <QPainter>
 #include <QMouseEvent>
 #include <cmath>
 
 namespace ui::views {
-    DisassemblyTable::DisassemblyTable(QWidget* parent) : QTableView(parent) {
+    CodeTable::CodeTable(QWidget* parent) : QTableView(parent) {
         this->setMouseTracking(true);
         this->resize_timer_ = new QTimer(this);
-        this->connect(this->resize_timer_, &QTimer::timeout, this, &DisassemblyTable::SmoothResize);
+        this->connect(this->resize_timer_, &QTimer::timeout, this, &CodeTable::SmoothResize);
     }
 
-    int DisassemblyTable::FindResizeColumn(int x) {
+    int CodeTable::FindResizeColumn(int x) {
         if (!this->model()) return -1;
 
         int current = -this->horizontalScrollBar()->value();
@@ -26,7 +26,7 @@ namespace ui::views {
         return -1;
     }
 
-    void DisassemblyTable::mouseMoveEvent(QMouseEvent* event) {
+    void CodeTable::mouseMoveEvent(QMouseEvent* event) {
         if (this->resizing_) {
             int difference = static_cast<int>(event->position().x()) - this->start_x_;
             int new_width = std::max(this->start_width_ + difference, this->kMinColumnWidth);
@@ -45,7 +45,7 @@ namespace ui::views {
         QTableView::mouseMoveEvent(event);
     }
 
-    void DisassemblyTable::mousePressEvent(QMouseEvent* event) {
+    void CodeTable::mousePressEvent(QMouseEvent* event) {
         if (event->button() == Qt::LeftButton) {
             int column = this->FindResizeColumn(static_cast<int>(event->position().x()));
             if (column != -1) {
@@ -60,7 +60,7 @@ namespace ui::views {
         QTableView::mousePressEvent(event);
     }
 
-    void DisassemblyTable::mouseReleaseEvent(QMouseEvent* event) {
+    void CodeTable::mouseReleaseEvent(QMouseEvent* event) {
         if (event->button() == Qt::LeftButton && this->resizing_) {
             this->resizing_ = false;
             if (this->resize_column_ != -1)
@@ -72,7 +72,7 @@ namespace ui::views {
         QTableView::mouseReleaseEvent(event);
     }
 
-    void DisassemblyTable::SmoothResize() {
+    void CodeTable::SmoothResize() {
         if (this->resize_column_ == -1) {
             this->resize_timer_->stop();
             return;
@@ -93,7 +93,7 @@ namespace ui::views {
         this->setColumnWidth(this->resize_column_, current + step);
     }
 
-    void DisassemblyTable::paintEvent(QPaintEvent* event) {
+    void CodeTable::paintEvent(QPaintEvent* event) {
         QTableView::paintEvent(event);
         if (!this->model()) return;
 
@@ -109,7 +109,7 @@ namespace ui::views {
         }
     }
 
-    void DisassemblyTable::scrollTo(const QModelIndex& index, ScrollHint hint) {
+    void CodeTable::scrollTo(const QModelIndex& index, ScrollHint hint) {
         int h_scroll = this->horizontalScrollBar()->value();
         QTableView::scrollTo(index, hint);
         this->horizontalScrollBar()->setValue(h_scroll); /* restore original horizontal position */

@@ -1,12 +1,13 @@
-#include <ui/views/binary/disasm/ddelegate.hpp>
-#include <ui/views/binary/disasm/dmodel.hpp>
+#include <ui/views/disassembly/code/delegate.hpp>
+#include <ui/views/disassembly/code/model.hpp>
+
 #include <QPainter>
 #include <QRegularExpression>
 
 namespace ui::views {
-    DisassemblyDelegate::DisassemblyDelegate(QObject* parent) : QStyledItemDelegate(parent) {}
+    CodeDelegate::CodeDelegate(QObject* parent) : QStyledItemDelegate(parent) {}
 
-    void DisassemblyDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const {
+    void CodeDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const {
         painter->save();
 
         if (option.state & QStyle::State_Selected) {
@@ -19,13 +20,13 @@ namespace ui::views {
         QRect rect = option.rect.adjusted(6, 0, -6, 0);
 
         switch (index.column()) {
-            case DisassemblyModel::Address:
+            case CodeModel::Address:
                 painter->setPen(QColor(140, 140, 140));
                 break;
-            case DisassemblyModel::Bytes:
+            case CodeModel::Bytes:
                 painter->setPen(QColor(160, 160, 170));
                 break;
-            case DisassemblyModel::Text: {
+            case CodeModel::Text: {
                 static const QRegularExpression mnemonic_re("^(\\S+)");
                 auto match = mnemonic_re.match(text);
                 if (match.hasMatch()) {

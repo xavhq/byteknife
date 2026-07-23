@@ -1,6 +1,6 @@
 #pragma once
 #include <ui/app/components/ViewPlaceHolderContent.hpp>
-#include <ui/views/binary/disasm/dwidget.hpp>
+#include <ui/views/disassembly/code/widget.hpp>
 
 #include <QWidget>
 #include <QSplitter>
@@ -8,10 +8,10 @@
 #include <QStackedWidget>
 
 namespace ui::views {
-    class BinaryView : public QWidget {
+    class DisassemblyView : public QWidget {
         Q_OBJECT
     public:
-        explicit BinaryView(QWidget* parent = nullptr);
+        explicit DisassemblyView(QWidget* parent = nullptr);
 
         void AddInstructionRow(const QString& address, const QString& bytes, const QString& text);
         void ClearDisassembly();
@@ -24,7 +24,7 @@ namespace ui::views {
         /* ui */
         QSplitter* main_splitter_;
         QStackedWidget* disassembly_stack_;
-        DisassemblyWidget* disassembly_;
+        CodeWidget* code_;
         QWidget* functions_;
         QWidget* xrefs_;
 

@@ -12,5 +12,6 @@ namespace ui {
         this->WindowInit();
         this->MenuInit();
         this->WorkViewsInit();
+        this->CommandBarInit();
     }
 }

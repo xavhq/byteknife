@@ -117,4 +117,12 @@ namespace ui::views {
         this->stack_->setCurrentIndex(0);
         this->toolbar_->setVisible(false);
     }
+
+    void HexView::RunSearch(const QString& pattern) {
+        this->hex_view_->RunSearchDirect(pattern);
+    }
+
+    void HexView::OpenFindDialog() {
+        this->hex_view_->FindPatternFromUser();
+    }
 }

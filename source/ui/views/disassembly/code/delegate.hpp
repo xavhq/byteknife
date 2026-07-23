@@ -2,9 +2,9 @@
 #include <QStyledItemDelegate>
 
 namespace ui::views {
-    class DisassemblyDelegate : public QStyledItemDelegate {
+    class CodeDelegate : public QStyledItemDelegate {
     public:
-        explicit DisassemblyDelegate(QObject* parent = nullptr);
+        explicit CodeDelegate(QObject* parent = nullptr);
 
         void paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const override;
     };

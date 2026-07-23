@@ -336,4 +336,8 @@ namespace ui::views {
         }
         event->accept();
     }
+
+    void HexViewport::RunSearchDirect(const QString& pattern) {
+        this->RunSearch(pattern, 0, true);
+    }
 }

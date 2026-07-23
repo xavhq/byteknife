@@ -19,6 +19,9 @@ namespace ui::views {
         void OnBinaryOpen();
         void OnBinaryClosed();
 
+        void RunSearch(const QString& pattern);
+        void OpenFindDialog();
+
     private:
         QStackedWidget* stack_;
         HexViewport* hex_view_;

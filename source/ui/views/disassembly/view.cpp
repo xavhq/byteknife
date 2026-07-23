@@ -1,16 +1,16 @@
-#include <ui/views/binary/view.hpp>
+#include <ui/views/disassembly/view.hpp>
 
 #include <QVBoxLayout>
 #include <QResizeEvent>
 
 namespace ui::views {
-    BinaryView::BinaryView(QWidget* parent) : QWidget(parent) {
+    DisassemblyView::DisassemblyView(QWidget* parent) : QWidget(parent) {
         this->main_splitter_ = new QSplitter(Qt::Horizontal, this);
 
         {   /* disassembly */
-            this->disassembly_ = new DisassemblyWidget(this);
-            this->disassembly_->setMinimumWidth(400);
-            this->disassembly_->setVisible(false);
+            this->code_ = new CodeWidget(this);
+            this->code_->setMinimumWidth(400);
+            this->code_->setVisible(false);
         }
 
         {   /* functions */
@@ -31,11 +31,11 @@ namespace ui::views {
             this->disassembly_stack_ = new QStackedWidget(this);
             this->disassembly_stack_->setMinimumWidth(400);
 
-            this->disassembly_ = new DisassemblyWidget(this->disassembly_stack_);
+            this->code_ = new CodeWidget(this->disassembly_stack_);
             this->placeholder_ = new ViewPlaceHolderContent(this->disassembly_stack_);
 
             this->disassembly_stack_->addWidget(this->placeholder_);
-            this->disassembly_stack_->addWidget(this->disassembly_);
+            this->disassembly_stack_->addWidget(this->code_);
             this->disassembly_stack_->setCurrentIndex(0);
         }
 
@@ -56,21 +56,21 @@ namespace ui::views {
         }
     }
 
-    void BinaryView::AddInstructionRow(const QString& address, const QString& bytes, const QString& text) {
-        this->disassembly_->AddInstructionRow(address, bytes, text);
+    void DisassemblyView::AddInstructionRow(const QString& address, const QString& bytes, const QString& text) {
+        this->code_->AddInstructionRow(address, bytes, text);
     }
 
-    void BinaryView::ClearDisassembly() {
-        this->disassembly_->ClearDisassembly();
+    void DisassemblyView::ClearDisassembly() {
+        this->code_->ClearDisassembly();
     }
 
-    void BinaryView::OnBinaryOpen() {
+    void DisassemblyView::OnBinaryOpen() {
         this->functions_->setVisible(true);
         this->xrefs_->setVisible(true);
-        this->disassembly_stack_->setCurrentIndex(1); /* show disassembly */
+        this->disassembly_stack_->setCurrentIndex(1); /* show code */
     }
 
-    void BinaryView::OnBinaryClosed() {
+    void DisassemblyView::OnBinaryClosed() {
         this->functions_->setVisible(false);
         this->xrefs_->setVisible(false);
         this->ClearDisassembly();

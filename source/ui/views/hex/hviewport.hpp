@@ -16,6 +16,7 @@ namespace ui::views {
 
         void FindPatternFromUser(); /* prompts, then finds first match from start */
         void FindNext();            /* repeats last pattern, from just after current match */
+        void RunSearchDirect(const QString& pattern);
 
     protected:
         void paintEvent(QPaintEvent* event) override;

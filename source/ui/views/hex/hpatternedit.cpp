@@ -1,7 +1,9 @@
 #include <ui/views/hex/hpatternedit.hpp>
+
 #include <QKeyEvent>
 #include <QClipboard>
 #include <QApplication>
+#include <cstdlib>
 
 namespace ui::views {
     HexPatternEdit::HexPatternEdit(QWidget* parent) : QLineEdit(parent) { }
@@ -16,9 +18,8 @@ namespace ui::views {
             parts << token;
         if (!this->pending_.isEmpty())
             parts << this->pending_;
-        QString text = parts.join(' ');
-        QLineEdit::setText(text);
-        this->setCursorPosition(text.size());
+
+        QLineEdit::setText(parts.join(' '));
     }
 
     void HexPatternEdit::Clear() {
@@ -35,13 +36,13 @@ namespace ui::views {
                 this->committed_.push_back(part.toUpper());
         }
         this->Render();
+        this->setCursorPosition(this->text().size());
     }
 
     void HexPatternEdit::AppendChar(QChar ch) {
         if (ch == '?') {
             if (this->pending_.isEmpty())
                 this->committed_.push_back("??");
-
             return;
         }
         if (this->IsHexChar(ch)) {
@@ -55,29 +56,84 @@ namespace ui::views {
         }
     }
 
-    void HexPatternEdit::PasteFromClipboard() {
-        /* TODO: fix bug with pasting removing everything */
-        QString clip = QApplication::clipboard()->text();
+    int HexPatternEdit::GapCharOffset(int gap_index) const {
+        return this->committed_.mid(0, gap_index).join(' ').size();
+    }
 
-        if (clip.isEmpty()) {
+    int HexPatternEdit::GapIndexNear(int char_pos) const {
+        int n = this->committed_.size();
+        int best_gap = 0;
+        int best_distance = std::abs(char_pos - this->GapCharOffset(0));
+
+        for (int i = 1; i <= n; i++) {
+            int distance = std::abs(char_pos - this->GapCharOffset(i));
+            if (distance < best_distance) {
+                best_distance = distance;
+                best_gap = i;
+            }
+        }
+        return best_gap;
+    }
+
+    int HexPatternEdit::GapIndexAtCursor() const {
+        return this->GapIndexNear(this->cursorPosition());
+    }
+
+    void HexPatternEdit::RemoveSelectedTokens() {
+        if (!this->hasSelectedText())
             return;
-        }
 
-        this->Clear();
-        for (const QChar& ch : clip) {
-            this->AppendChar(ch);
+        int sel_start = this->selectionStart();
+        int sel_end = sel_start + this->selectedText().size();
+
+        int start_gap = this->GapIndexNear(sel_start);
+        int end_gap = this->GapIndexNear(sel_end);
+
+        if (end_gap > start_gap)
+            this->committed_.erase(this->committed_.begin() + start_gap, this->committed_.begin() + end_gap);
+
+        this->pending_.clear();
+        this->Render();
+        this->setCursorPosition(this->GapCharOffset(start_gap));
+    }
+
+    void HexPatternEdit::PasteFromClipboard() {
+        QString clip = QApplication::clipboard()->text();
+        if (clip.isEmpty())
+            return;
+
+        QStringList tokens;
+        for (const QString& part : clip.split(' ', Qt::SkipEmptyParts)) {
+            if (part == "??" || (part.size() == 2 && this->IsHexChar(part.at(0)) && this->IsHexChar(part.at(1))))
+                tokens.push_back(part.toUpper());
         }
+        if (tokens.isEmpty())
+            return;
+
+        if (this->hasSelectedText())
+            this->RemoveSelectedTokens();
+
+        this->pending_.clear();
+
+        int insert_at = this->GapIndexAtCursor();
+        for (int i = 0; i < tokens.size(); i++)
+            this->committed_.insert(insert_at + i, tokens.at(i));
 
         this->Render();
+        this->setCursorPosition(this->GapCharOffset(insert_at + tokens.size()));
     }
 
     void HexPatternEdit::CopyToClipboard() {
-        QApplication::clipboard()->setText(this->text());
+        QString text_to_copy = this->hasSelectedText() ? this->selectedText() : this->text();
+        QApplication::clipboard()->setText(text_to_copy);
     }
 
     void HexPatternEdit::CutToClipboard() {
         this->CopyToClipboard();
-        this->Clear();
+        if (this->hasSelectedText())
+            this->RemoveSelectedTokens();
+        else
+            this->Clear();
     }
 
     void HexPatternEdit::keyPressEvent(QKeyEvent* event) {
@@ -97,51 +153,45 @@ namespace ui::views {
             return;
         }
 
-        /* select-all then backspace/delete/type clears everything */
-        if (this->selectedText() == this->text() && !this->text().isEmpty() &&
+        if (this->hasSelectedText() &&
             (event->key() == Qt::Key_Backspace || event->key() == Qt::Key_Delete)) {
-            this->Clear();
+            this->RemoveSelectedTokens();
             event->accept();
             return;
         }
+
         if (event->key() == Qt::Key_Backspace) {
             if (!this->pending_.isEmpty()) {
                 this->pending_.clear();
             } else if (!this->committed_.isEmpty()) {
                 QString last = this->committed_.takeLast();
                 if (last != "??")
-                    this->pending_ = last.left(1); /* "AD" -> pending "A" */
+                    this->pending_ = last.left(1);
             }
             this->Render();
+            this->setCursorPosition(this->text().size());
             event->accept();
             return;
         }
+
         QString input = event->text();
         if (input.isEmpty()) {
             QLineEdit::keyPressEvent(event);
             return;
         }
+
+        if (this->hasSelectedText())
+            this->RemoveSelectedTokens();
+
         QChar ch = input.at(0);
-        if (ch == '?') {
-            if (this->pending_.isEmpty()) {
-                this->committed_.push_back("??");
-                this->Render();
-            }
-            event->accept();
-            return;
-        }
-        if (this->IsHexChar(ch)) {
-            ch = ch.toUpper();
-            if (this->pending_.isEmpty()) {
-                this->pending_ = ch;
-            } else {
-                this->committed_.push_back(this->pending_ + ch);
-                this->pending_.clear();
-            }
+        if (ch == '?' || this->IsHexChar(ch)) {
+            this->AppendChar(ch);
             this->Render();
+            this->setCursorPosition(this->text().size());
             event->accept();
             return;
         }
+
         event->accept(); /* swallow anything else */
     }
 }

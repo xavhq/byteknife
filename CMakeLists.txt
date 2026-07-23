@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.20)
-project(byteknife VERSION 0.1.3 LANGUAGES CXX C)
+project(byteknife VERSION 0.1.4 LANGUAGES CXX C)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_STANDARD 23)

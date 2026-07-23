@@ -9,11 +9,11 @@ namespace ui::views {
         QString text;
     };
 
-    class DisassemblyModel : public QAbstractTableModel {
+    class CodeModel : public QAbstractTableModel {
     public:
         enum Column { Address = 0, Bytes = 1, Text = 2, ColumnCount = 3 };
 
-        explicit DisassemblyModel(QObject* parent = nullptr);
+        explicit CodeModel(QObject* parent = nullptr);
 
         int rowCount(const QModelIndex& = QModelIndex()) const override;
         int columnCount(const QModelIndex& = QModelIndex()) const override;

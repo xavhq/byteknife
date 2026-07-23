@@ -1,6 +1,7 @@
 #include <ui/app.hpp>
-#include <ui/views/binary/view.hpp>
+#include <ui/views/disassembly/view.hpp>
 #include <ui/views/hex/view.hpp>
+
 #include <QProgressDialog>
 #include <QApplication>
 #include <QFileDialog>
@@ -29,13 +30,13 @@ void ui::App::OpenBinaryEvent() {
         return;
     }
 
-    this->binary_view_->OnBinaryOpen();
+    this->disassembly_view_->OnBinaryOpen();
     this->hex_view_->OnBinaryOpen();
 
     /* TODO: replace with real disassembly output. */
-    /* TODO: make the addresses be 32bit / 64bit depending on the binaries architechure */
-    this->binary_view_->AddInstructionRow("00000401000", "55 8B EC", "push ebp");
-    this->binary_view_->AddInstructionRow("00000401001", "8B 45 08", "mov eax, [ebp+8]");
+    /* TODO: make the addresses be 32bit / 64bit depending on the binary architechure */
+    this->disassembly_view_->AddInstructionRow("00000401000", "55 8B EC", "push ebp");
+    this->disassembly_view_->AddInstructionRow("00000401001", "8B 45 08", "mov eax, [ebp+8]");
 
     progress.close();
 }

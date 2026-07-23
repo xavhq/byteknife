@@ -3,10 +3,10 @@
 #include <QTimer>
 
 namespace ui::views {
-    class DisassemblyTable : public QTableView {
+    class CodeTable : public QTableView {
         Q_OBJECT
     public:
-        explicit DisassemblyTable(QWidget* parent = nullptr);
+        explicit CodeTable(QWidget* parent = nullptr);
 
     protected:
         void paintEvent(QPaintEvent* event) override;

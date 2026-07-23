@@ -1,5 +1,5 @@
-#include <ui/views/binary/disasm/dwidget.hpp>
-#include <ui/views/binary/disasm/ddelegate.hpp>
+#include <ui/views/disassembly/code/widget.hpp>
+#include <ui/views/disassembly/code/delegate.hpp>
 
 #include <QVBoxLayout>
 #include <QHeaderView>
@@ -7,12 +7,12 @@
 #include <QFontDatabase>
 
 namespace ui::views {
-    DisassemblyWidget::DisassemblyWidget(QWidget* parent) : QWidget(parent) {
-        this->table_ = new DisassemblyTable(this);
-        this->model_ = new DisassemblyModel(this);
+    CodeWidget::CodeWidget(QWidget* parent) : QWidget(parent) {
+        this->table_ = new CodeTable(this);
+        this->model_ = new CodeModel(this);
 
         this->table_->setModel(this->model_);
-        this->table_->setItemDelegate(new DisassemblyDelegate(this->table_));
+        this->table_->setItemDelegate(new CodeDelegate(this->table_));
 
         this->table_->setSelectionBehavior(QAbstractItemView::SelectRows);
         this->table_->setSelectionMode(QAbstractItemView::ExtendedSelection);
@@ -54,11 +54,11 @@ namespace ui::views {
         layout->addWidget(this->table_);
     }
 
-    void DisassemblyWidget::AddInstructionRow(const QString& address, const QString& bytes, const QString& text) {
+    void CodeWidget::AddInstructionRow(const QString& address, const QString& bytes, const QString& text) {
         this->model_->AddRow(address, bytes, text);
     }
 
-    void DisassemblyWidget::ClearDisassembly() {
+    void CodeWidget::ClearDisassembly() {
         this->model_->Clear();
     }
 }

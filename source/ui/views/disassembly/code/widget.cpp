@@ -21,7 +21,7 @@ namespace ui::views {
         this->table_->setHorizontalScrollMode(QAbstractItemView::ScrollPerPixel);
         this->table_->verticalScrollBar()->setSingleStep(5);
         this->table_->verticalHeader()->hide();
-        this->table_->verticalHeader()->setDefaultSectionSize(28);
+        this->table_->verticalHeader()->setDefaultSectionSize(24);
         this->table_->setFocusPolicy(Qt::StrongFocus);
 
         auto* header = this->table_->horizontalHeader();
@@ -29,10 +29,11 @@ namespace ui::views {
         header->setFixedHeight(0);
         header->setSectionsClickable(false);
         header->setHighlightSections(false);
+        header->setStretchLastSection(true);
 
-        this->table_->setColumnWidth(0, 300);
-        this->table_->setColumnWidth(1, 180);
-        this->table_->setColumnWidth(2, 500);
+        this->table_->setColumnWidth(0, 150);
+        this->table_->setColumnWidth(1, 195);
+        this->table_->setColumnWidth(2, 400);
 
         this->table_->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
         this->table_->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
@@ -40,12 +41,12 @@ namespace ui::views {
 
         QFont font = this->table_->font();
         font.setFamily(QFontDatabase::systemFont(QFontDatabase::FixedFont).family());
-        font.setPointSize(14);
+        font.setPointSize(11);
         this->table_->setFont(font);
 
         this->table_->setStyleSheet(
-            "QScrollBar:vertical { width: 20px; }"
-            "QScrollBar:horizontal { height: 20px; }"
+            "QScrollBar:vertical { width: 22px; }"
+            "QScrollBar:horizontal { height: 22px; }"
             "QTableView::item:selected { background-color: rgba(255,255,255,45); color: #EAEAEA; }"
         );
 

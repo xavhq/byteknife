@@ -128,46 +128,50 @@ void ui::App::MenuInit() {
         view_button->setPopupMode(QToolButton::InstantPopup);
         toolbar->addWidget(view_button);
 
-        QAction* cpu_tab_action = view_menu->addAction("&CPU");
-        cpu_tab_action->setCheckable(true);
-        cpu_tab_action->setChecked(true);
-        (void)cpu_tab_action;
-
-        QAction* memory_tab_action = view_menu->addAction("&Memory");
-        memory_tab_action->setCheckable(true);
-        (void)memory_tab_action;
-
-        QAction* symbols_tab_action = view_menu->addAction("&Symbols");
-        symbols_tab_action->setCheckable(true);
-        (void)symbols_tab_action;
-
-        QAction* imports_tab_action = view_menu->addAction("&Imports");
-        imports_tab_action->setCheckable(true);
-        (void)imports_tab_action;
-
-        QAction* exports_tab_action = view_menu->addAction("E&xports");
-        exports_tab_action->setCheckable(true);
-        (void)exports_tab_action;
-
-        view_menu->addSeparator();
-
         QAction* disassembly_action = view_menu->addAction("&Disassembly");
         disassembly_action->setCheckable(true);
         disassembly_action->setChecked(true);
-        (void)disassembly_action;
+        this->BindCheckableSetting(disassembly_action, "view/disassemblytab", true, [this](bool checked) {
+            this->work_view_tabs_->setTabVisible(this->work_view_tabs_->indexOf(this->disassembly_view_), checked);
+        });
+
+        QAction* decompiler_action = view_menu->addAction("&Decompiler");
+        decompiler_action->setCheckable(true);
+        decompiler_action->setChecked(true);
+        (void)decompiler_action;
 
         QAction* hex_dump_action = view_menu->addAction("&Hex Dump");
         hex_dump_action->setCheckable(true);
         hex_dump_action->setChecked(true);
-        (void)hex_dump_action;
+        this->BindCheckableSetting(hex_dump_action, "view/hexdumptab", true, [this](bool checked) {
+            this->work_view_tabs_->setTabVisible(this->work_view_tabs_->indexOf(this->hex_view_), checked);
+        });
 
-        QAction* stack_view_action = view_menu->addAction("&Stack");
-        stack_view_action->setCheckable(true);
-        (void)stack_view_action;
+        view_menu->addSeparator();
 
-        QAction* register_view_action = view_menu->addAction("&Registers");
-        register_view_action->setCheckable(true);
-        (void)register_view_action;
+        QAction* symbols_tab_action = view_menu->addAction("&Symbols");
+        symbols_tab_action->setCheckable(true);
+        symbols_tab_action->setChecked(true);
+        this->BindCheckableSetting(symbols_tab_action, "view/symbolspanel", true, [this](bool checked) {
+            this->disassembly_view_->GetSymbolsPanel()->setVisible(checked);
+        });
+
+        QAction* functions_tab_action = view_menu->addAction("&Functions");
+        functions_tab_action->setCheckable(true);
+        functions_tab_action->setChecked(true);
+        (void)functions_tab_action;
+
+        QAction* imports_tab_action = view_menu->addAction("&Imports");
+        imports_tab_action->setCheckable(true);
+        imports_tab_action->setChecked(true);
+        (void)imports_tab_action;
+
+        QAction* xref_tab_action = view_menu->addAction("&XRefs");
+        xref_tab_action->setCheckable(true);
+        xref_tab_action->setChecked(true);
+        this->BindCheckableSetting(xref_tab_action, "view/xrefpanel", true, [this](bool checked) {
+            this->disassembly_view_->GetXRefsPanel()->setVisible(checked);
+        });
 
         view_menu->addSeparator();
 
@@ -179,7 +183,9 @@ void ui::App::MenuInit() {
         QAction* show_statusbar_action = view_menu->addAction("&Status Bar");
         show_statusbar_action->setCheckable(true);
         show_statusbar_action->setChecked(true);
-        (void)show_statusbar_action;
+        this->BindCheckableSetting(show_statusbar_action, "view/statusbar", true, [this](bool checked) {
+            this->statusBar()->setVisible(checked);
+        });
     }
 
     /* debug menu */

@@ -13,11 +13,11 @@ namespace ui::views {
             this->code_->setVisible(false);
         }
 
-        {   /* functions */
-            this->functions_ = new QWidget(this);
-            this->functions_->setMinimumWidth(250);
-            this->functions_->setMaximumWidth(400);
-            this->functions_->setVisible(false);
+        {   /* symbols */
+            this->symbols_ = new QWidget(this);
+            this->symbols_->setMinimumWidth(250);
+            this->symbols_->setMaximumWidth(400);
+            this->symbols_->setVisible(false);
         }
 
         {   /* xrefs */
@@ -40,7 +40,7 @@ namespace ui::views {
         }
 
         {   /* splitter */
-            this->main_splitter_->addWidget(this->functions_);
+            this->main_splitter_->addWidget(this->symbols_);
             this->main_splitter_->addWidget(this->disassembly_stack_);
             this->main_splitter_->addWidget(this->xrefs_);
             this->main_splitter_->setStretchFactor(0, 1);
@@ -65,13 +65,11 @@ namespace ui::views {
     }
 
     void DisassemblyView::OnBinaryOpen() {
-        this->functions_->setVisible(true);
-        this->xrefs_->setVisible(true);
         this->disassembly_stack_->setCurrentIndex(1); /* show code */
     }
 
     void DisassemblyView::OnBinaryClosed() {
-        this->functions_->setVisible(false);
+        this->symbols_->setVisible(false);
         this->xrefs_->setVisible(false);
         this->ClearDisassembly();
         this->disassembly_stack_->setCurrentIndex(0); /* show placeholder */

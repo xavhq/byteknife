@@ -9,9 +9,18 @@ namespace ui {
         (void)argc;
         (void)argv;
 
+        ui::OnOpenBinaryRequested = [this]() {
+            this->OpenBinaryEvent();
+        };
+
         this->WindowInit();
-        this->MenuInit();
         this->WorkViewsInit();
         this->CommandBarInit();
+        this->OutputInit();
+        this->MenuInit();
+
+
+        if (g_output)
+            g_output->Info("byteknife fully loaded.");
     }
 }

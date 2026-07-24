@@ -10,6 +10,7 @@
 #include <QToolBar>
 #include <QCompleter>
 #include <QShortcut>
+#include <QTimer>
 
 void ui::App::CommandBarInit() {
     QWidget* bar = new QWidget(this);
@@ -31,6 +32,7 @@ void ui::App::CommandBarInit() {
         "  border: none;"
         "}"
     );
+    this->command_input_->installEventFilter(this);
 
     QPalette faded_palette = this->command_input_->palette();
     QColor muted = faded_palette.color(QPalette::Text);
@@ -76,7 +78,10 @@ void ui::App::CommandBarInit() {
         "help",
         "find",
         "goto",
-        "tab"
+        "tab",
+
+        "openbin",
+        "exit"
     };
 
     /* flat-list command completion */
@@ -94,4 +99,20 @@ void ui::App::CommandBarInit() {
         this->command_input_->setFocus();
         this->command_input_->selectAll();
     });
+
+    this->command_input_->setFocus(); /* set focus when first init */
+}
+
+bool ui::App::eventFilter(QObject* obj, QEvent* event) {
+    if (obj == this->command_input_ && event->type() == QEvent::KeyPress) {
+        auto* key_event = static_cast<QKeyEvent*>(event);
+        if (key_event->key() == Qt::Key_Tab) {
+            QTimer::singleShot(0, this, [this]() {
+                this->command_input_->setFocus();   /* set focus after accepting auto complete */
+                this->command_input_->setCursorPosition(this->command_input_->text().length());
+            });
+            return false;
+        }
+    }
+    return QMainWindow::eventFilter(obj, event);
 }

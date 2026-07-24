@@ -1,9 +1,12 @@
 #include <ui/app.hpp>
 #include <ui/app/components/CommandLineToken.hpp>
+#include <ui/views/output/view.hpp>
 
 void ui::App::find(CLTokenVector& tokens) {
     if (tokens.size() < 2) {
-        qDebug() << "Usage: find <hex pattern | text | address>";
+        if (g_output)
+            g_output->Warn("Usage: find <hex pattern | text | address>");
+
         return;
     }
 
@@ -22,6 +25,7 @@ void ui::App::find(CLTokenVector& tokens) {
             QString hex_part = token.startsWith("0x", Qt::CaseInsensitive) ? token.mid(2) : token;
             bool ok = false;
             quint64 address = hex_part.toULongLong(&ok, 16); /* TODO: clamp to loaded binary's bit width */
+            (void)address;
 
             if (ok) {
                 /* TODO: address search stub */

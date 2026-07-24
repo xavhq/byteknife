@@ -1,7 +1,7 @@
 #pragma once
 #include <ui/app/components/ViewPlaceHolderContent.hpp>
-
 #include <ui/views/hex/hviewport.hpp>
+
 #include <QWidget>
 #include <QStackedWidget>
 #include <QPushButton>

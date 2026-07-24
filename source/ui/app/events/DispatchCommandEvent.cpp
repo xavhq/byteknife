@@ -16,5 +16,9 @@ void ui::App::DispatchCommandEvent(CLTokenVector& tokens) {
         this->tab(tokens);
     } else if (tkn == "find") {
         this->find(tokens);
+    } else if (tkn == "openbin") {
+        this->openbin();
+    } else if (tkn == "exit") {
+        this->exit();
     }
 }

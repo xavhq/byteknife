@@ -6,5 +6,7 @@ namespace ui::views {
         Q_OBJECT
     public:
         explicit ViewPlaceHolderContent(QWidget* parent = nullptr);
+    signals:
+        void OpenBinaryRequested();
     };
 }

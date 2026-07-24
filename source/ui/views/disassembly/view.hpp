@@ -20,12 +20,15 @@ namespace ui::views {
         void OnBinaryOpen();
         void OnBinaryClosed();
 
+        QWidget* GetSymbolsPanel() const { return this->symbols_; }
+        QWidget* GetXRefsPanel() const { return this->xrefs_; }
+
     private:
         /* ui */
         QSplitter* main_splitter_;
         QStackedWidget* disassembly_stack_;
         CodeWidget* code_;
-        QWidget* functions_;
+        QWidget* symbols_;
         QWidget* xrefs_;
 
         ui::views::ViewPlaceHolderContent* placeholder_;
